@@ -26,21 +26,22 @@
         }
       }
 
-      function isNameValid (name)
-      {
-        if (name.length === 0 )
-        {
+      //validates that the name is non-empty and contains only alphabetic characters
+      function isNameValid(name) {
+        if (!name || name.length === 0) {
           return false;
         }
 
-        for (let i = 0; i < name.length; i++)
-        {
-          let char = name[i];
-          if (!((char >= "A" && char <= "Z") || (char >= "a" && char <= "z"))) {
-          return false; 
+        for (let i = 0; i < name.length; i++) {
+          const char = name[i];
+          const isUpper = char >= 'A' && char <= 'Z';
+          const isLower = char >= 'a' && char <= 'z';
+          if (!(isUpper || isLower)) {
+            return false;
+          }
         }
-          return true;
-        }
+
+        return true;
       }
   </script>
 
