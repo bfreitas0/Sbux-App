@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lab 01</title>
+</head>
+
+<body>
+
+  <p>Welcome to Starbucks! What name should I put on the cup?</p>
+  <input type="text" id="nameInput"> 
+  <button onclick="enterName()">Enter</button> 
+  <p id="nameOutput"></p>
+
+  <script>
+      function enterName()
+      {
+        let name = document.getElementById("nameInput").value.trim();
+
+        if (isNameValid(name))
+        {
+          document.getElementById("nameOutput").textContent = "Hello, " + name + " :)";
+        }
+        else
+        {
+          document.getElementById("nameOutput").textContent = "Please enter a valid name.";
+        }
+      }
+
+      function isNameValid (name)
+      {
+        if (name.length === 0 )
+        {
+          return false;
+        }
+
+        for (let i = 0; i < name.length; i++)
+        {
+          let char = name[i];
+          if (!((char >= "A" && char <= "Z") || (char >= "a" && char <= "z"))) {
+          return false; 
+        }
+          return true;
+        }
+      }
+  </script>
+
+</body>
+
+</html>
