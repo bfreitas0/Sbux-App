@@ -1,48 +1,202 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lab 01</title>
+  <title>Project 1</title>
 </head>
 
 <body>
 
-  <p>Welcome to Starbucks! What name should I put on the cup?</p>
-  <input type="text" id="nameInput"> 
-  <button onclick="enterName()">Enter</button> 
-  <p id="nameOutput"></p>
+  <h1>Starbucks Order</h1>
+  <p id="welcome">Welcome to Starbucks! Click the button below to start an order.</p>
+  <button id="startBtn">Start Order</button>
+  <pre id="output" style="background:#f8f8f8;padding:10px;border:1px solid #ddd;
+  max-height:300px;overflow:auto;"></pre>
 
   <script>
-      function enterName()
+
+    var orders = [];
+
+    function write(msg) 
+    {
+      var out = document.getElementById('output');
+      out.textContent += msg + "\n";
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function getName() 
+    {
+      do {
+        var userInput = prompt("Welcome to Starbucks! What name should I put on the cup? (Q to quit)");
+        if (userInput === null) return null;
+
+        var name = userInput.trim();
+
+        if (name.toUpperCase() === 'Q' || name.toUpperCase() === 'X') return null;
+
+        if (isNameValid(name)) return name;
+
+        alert('Please enter a name containing only letters A-Z.');
+      } while (true);
+    }
+
+    function getType() 
+    {
+      do 
       {
-        let name = document.getElementById("nameInput").value.trim();
+        var userInput = prompt("What can I get started for you? Type: (C)offee, (T)ea, (O)ther,default C  (Q to quit)");
 
-        if (isNameValid(name))
-        {
-          document.getElementById("nameOutput").textContent = "Hello, " + name + " :)";
-        }
-        else
-        {
-          document.getElementById("nameOutput").textContent = "Please enter a valid name.";
-        }
+        if (userInput === null) return null;
+
+        var s = userInput.trim();
+
+        if (s === '') return 'coffee';
+
+        var ch = s[0].toUpperCase();
+
+        if (ch === 'Q' || ch === 'X') return null;
+        if (ch === 'C') return 'coffee';
+        if (ch === 'T') return 'tea';
+        if (ch === 'O') return 'other';
+
+        alert('Please enter C, T, O, or press Enter for default (C).');
+
+      } while (true);
+    }
+
+    function getSize() {
+      do 
+      {
+        var userInput = prompt('Enter Size (S=short, T=tall, G=grande [default], V=venti) (Q to quit)');
+
+        if (userInput === null) return null;
+
+        var s = userInput.trim();
+
+        if (s === '') return 'grande';
+
+        var ch = s[0].toUpperCase();
+
+        if (ch === 'Q' || ch === 'X') return null;
+        if (ch === 'S') return 'short';
+        if (ch === 'T') return 'tall';
+        if (ch === 'G') return 'grande';
+        if (ch === 'V') return 'venti';
+
+        alert('Please enter S, T, G, V, or press Enter for default (G).');
+
+      } while (true);
+    }
+
+    function getTemp() 
+    {
+      do 
+      {
+        var userInput = prompt('C. Temperature: (H)ot [default], (C)old (Q to quit)');
+        if (userInput === null) return null;
+        var s = userInput.trim();
+        if (s === '') return 'hot';
+        var ch = s[0].toUpperCase();
+        if (ch === 'Q' || ch === 'X') return null;
+        if (ch === 'H') return 'hot';
+        if (ch === 'C') return 'cold';
+        alert('Please enter H or C, or press Enter for default (H).');
+      } while (true);
+    }
+
+    function getAdds() 
+    {
+      do 
+      {
+        var userInput = prompt('C. Add-ins(Q to quit)');
+        if (userInput === null) return null;
+        var s = userInput.trim();
+        if (s.toUpperCase() === 'Q' || s.toUpperCase() === 'X') return null;
+        return s;
+      } while (true);
+    }
+
+    function getQty() 
+    {
+      do 
+      {
+        var userInput = prompt('C. Quantity (enter a whole number, default 1). (Q to quit)');
+        if (userInput === null) return null;
+        var s = userInput.trim();
+        if (s === '') return 1;
+        if (s.toUpperCase() === 'Q' || s.toUpperCase() === 'X') return null;
+        var n = Number(s);
+        if (Number.isInteger(n) && n >= 1) return n;
+        alert('Please enter a whole number >= 1, or press Enter for default (1).');
+      } while (true);
+    }
+
+    function isNameValid(name) {
+      if (!name || name.length === 0) return false;
+      for (var i = 0; i < name.length; i++) {
+        var ch = name[i];
+        var isUpper = ch >= 'A' && ch <= 'Z';
+        var isLower = ch >= 'a' && ch <= 'z';
+        if (!(isUpper || isLower)) return false;
+      }
+      return true;
+    }
+
+    // Format order
+    function formatOrder(o) 
+    {
+      var qty = o.qty || 1;
+      var temp = o.temp || 'hot';
+      var size = o.size || 'grande';
+      var type = o.type || 'coffee';
+      var adds = o.adds || '';
+      var name = o.name || '';
+
+      // build adds part
+      var addsStr = '';
+      if (adds !== '') {
+        addsStr = ' with ' + adds;
       }
 
-      //validates that the name is non-empty and contains only alphabetic characters
-      function isNameValid(name) {
-        if (!name || name.length === 0) {
-          return false;
-        }
+      // concat together into one string
+      var out = qty + ' ' + temp + ' ' + size + ' ' + type + addsStr + ' - for ' + name;
+      return out;
+    }
 
-        for (let i = 0; i < name.length; i++) {
-          const char = name[i];
-          const isUpper = char >= 'A' && char <= 'Z';
-          const isLower = char >= 'a' && char <= 'z';
-          if (!(isUpper || isLower)) {
-            return false;
-          }
-        }
+    function createOrder() {
+      var name = getName(); if (name === null) return null;
+      var type = getType(); if (type === null) return null;
+      var size = getSize(); if (size === null) return null;
+      var temp = getTemp(); if (temp === null) return null;
+      var adds = getAdds(); if (adds === null) return null;
+      var qty = getQty(); if (qty === null) return null;
 
-        return true;
+      return { name: name, type: type, size: size, temp: temp, adds: adds, qty: qty };
+    }
+
+    document.getElementById('startBtn').addEventListener('click', function()
+     {
+      write('New Order Session: \n');
+      while (true) {
+        var o = createOrder();
+        if (o === null) {
+          write('Order cancelled or user quit.');
+          break;
+        }
+        orders.push(o);
+        write('OK, ' + o.name + ', I have your order as:');
+        write('  ' + o.qty + ' ' + o.temp + ' ' + o.size + ' ' + o.type + (o.adds ? ' with ' + o.adds : ''));
+        var more = confirm('Add another order? Click OK to add another, Cancel to finish.');
+        if (!more) break;
       }
+
+      if (orders.length > 0) {
+        write('\nSummary of orders:\n');
+        orders.forEach(function(ord, idx) { write((idx+1) + '. ' + formatOrder(ord)); });
+        var dl = document.getElementById('downloadBtn'); if (dl) dl.disabled = false;
+      }
+    });
+
+
   </script>
 
 </body>
